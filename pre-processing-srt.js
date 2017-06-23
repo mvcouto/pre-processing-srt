@@ -12,9 +12,9 @@ function camelize(str) {
 //Da um split no arquivo inteiro e separa cada posição do vetor como sendo 1 tempo de legenda
 var arr = readFile.content("legends/" + process.argv.slice(2)[0] + ".srt").split("\n\r\n").map(val => val);
 
-var file = DBSrt.createDB(camelize(process.argv.slice(2)[0]).replace(new RegExp("-", 'g'), ""));
-file += DBSrt.useDB(camelize(process.argv.slice(2)[0]).replace(new RegExp("-", 'g'), ""));
-file += DBSrt.createTableSrtDB("SRT");
+var file = DBSrt.createDB("Trabalho2");
+file += DBSrt.useDB("Trabalho2");
+file += DBSrt.createTableSrtDB(camelize(process.argv.slice(2)[0]).replace(new RegExp("-", 'g'), ""));
 
 for (i = 0; i < arr.length-1; i++){
     //Da um split em cada tempo de legenda separando os campos.
@@ -31,11 +31,11 @@ for (i = 0; i < arr.length-1; i++){
             else
                 legend += arr2[j];
         }
-        file += DBSrt.insertSrtDB("SRT", arr2[0], arr3[0], arr3[1], legend);
+        file += DBSrt.insertSrtDB(camelize(process.argv.slice(2)[0]).replace(new RegExp("-", 'g'), ""), arr2[0], arr3[0], arr3[1], legend);
     }
     //Caso o tempo de reprodução tenha apenas uma linha de legenda.
     else{
-        file += DBSrt.insertSrtDB("SRT", arr2[0], arr3[0], arr3[1], arr2[2]);
+        file += DBSrt.insertSrtDB(camelize(process.argv.slice(2)[0]).replace(new RegExp("-", 'g'), ""), arr2[0], arr3[0], arr3[1], arr2[2]);
     }
 }
 
