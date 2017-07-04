@@ -17,10 +17,9 @@ var router = express.Router();// get an instance of the express Router
 var connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
-  password : 'root',
+  password : 'h4nnib4l',
   database : 'Trabalho2'
 });
-var app = express();
 
 connection.connect(function(err){
 if(!err) {
@@ -37,16 +36,28 @@ if(!err) {
     next(); // make sure we go to the next routes and don't stop here
 });*/
 
-router.route('/submitTask1')
-    .post(function(req, res) {
-            res.json({ message: 'Mensagem recebida!' });
-    });
+
+ var submissionTask1Service = require("./services/SubmissionTask1");
+router.post('/submitTask1', function (req, res) {
+try {
+    submissionTask1Service.insertSubmission(connection,
+        req.body.id_video,
+        req.body.begin_time,
+        req.body.end_time,
+        req.body.answer,
+	req.body.fingerprint);
+
+    console.log(req.body);
+    res.status(200).send("ok");
+});
 
 // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
+
 router.get('/task1', function(req, res) {
     res.json({ message: 'Acesso a dados da task1' });
+    connection.query('SELECT * FROM ')
 
-    /*connection.query('SELECT * from user LIMIT 2', function(err, rows, fields) {
+    /*connection.query('SELECT * from user LIMIT 2',  function(err, rows, fields) {
           connection.end();
           if (!err)
             console.log('The solution is: ', rows);
