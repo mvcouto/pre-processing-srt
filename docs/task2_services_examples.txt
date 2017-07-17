@@ -1,0 +1,21 @@
+GET /task2
+{
+    "id_video": "34",
+    "legenda": [
+        {
+            "id_legenda": "1"
+            "legenda": "Legenda de teste 1"
+        },
+        {
+            "id_legenda": "2"
+            "legenda": "Legenda de teste 2"
+        }
+    ],
+    "legenda_original" = "original subtitle"
+}
+
+POST /task2
+{
+    "id_legenda_escolhida": "1",
+    "fingerprint"= "asfHauOgn4324adnUv624iod#jo"
+}

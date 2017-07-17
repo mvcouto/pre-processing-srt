@@ -1,0 +1,4 @@
+CREATE TABLE task2submissions(id int NOT NULL AUTO_INCREMENT,
+id_legenda VARCHAR(255) NOT NULL,
+fingerprint VARCHAR(200) NOT NULL,
+PRIMARY KEY (id));

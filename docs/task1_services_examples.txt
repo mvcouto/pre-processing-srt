@@ -1,0 +1,14 @@
+GET /task1
+{
+    "id_video": "34"
+}
+
+POST /task1
+{
+    "id_video": "34",
+    "legenda": "Legenda de teste",
+    "tinicial": "",
+    "tfinal": "",
+    "fingerprint"= "asfHauOgn4324adnUv624iod#jo"
+}
+
