@@ -17,5 +17,7 @@ GET /task2
 POST /task2
 {
     "id_legenda_escolhida": "1",
+    "tinicial": "",
+    "tfinal": "",
     "fingerprint"= "asfHauOgn4324adnUv624iod#jo"
 }

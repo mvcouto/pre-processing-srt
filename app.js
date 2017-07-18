@@ -26,6 +26,9 @@ connection.connect(function (err) {
 });
 
 
+global.fifoTarefaEnviada = new Array();
+global.fifoTarefaRecebida = new Array();
+
 // Task 1 - Extrair legendas do vídeo
 var creatorTask1 = require("./services/CreatorTask1");
 router.get('/task1', function (req, res) {
