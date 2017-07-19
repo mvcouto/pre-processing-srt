@@ -18,8 +18,8 @@ DB.prototype.createTableSrtDB = function(name){
 DB.prototype.insertSrtDB = function(table, id, start, end, legend){
     legend = legend.replace(new RegExp("\"", 'g'), "\\\"");
     legend = legend.replace(new RegExp("\'", 'g'), "\\\'");
-    start = start.replace(",", ".");
-    end = end.replace(",", ".");
+    //start = start.replace(",", ".");
+    //end = end.replace(",", ".");
 
     return "INSERT INTO " + table + " (ID, start_legend, end_legend, legend) " +
     "VALUES ("+ id + ", \'" + start.replace(" ", "") + "\', \'" + end.replace(" ", "") + "\', \"" + legend + "\");" + "\n\n";
