@@ -11,6 +11,9 @@ app.use(bodyParser.json());
 var port = process.env.PORT || 8080;
 var router = express.Router();
 
+var spawn = require('child_process').spawn;
+spawn('node', ['pre-processing-srt.js', 'inglourious-basterds-english']);
+
 var connection = mysql.createConnection(process.env.CLEARDB_DATABASE_URL || {
     host: 'localhost',
     user: 'root',
