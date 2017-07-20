@@ -9,6 +9,18 @@ GET /task2
         {
             "id_legenda": "2"
             "legenda": "Legenda de teste 2"
+        },
+        {
+            "id_legenda": "3"
+            "legenda": "Legenda de teste 3"
+        },
+        {
+            "id_legenda": "4"
+            "legenda": "Legenda de teste 4"
+        },
+        {
+            "id_legenda": "5"
+            "legenda": "Legenda de teste 5"
         }
     ],
     "legenda_original" = "original subtitle"
@@ -16,6 +28,7 @@ GET /task2
 
 POST /task2
 {
+    "id_video": "1",
     "id_legenda_escolhida": "1",
     "tinicial": "",
     "tfinal": "",

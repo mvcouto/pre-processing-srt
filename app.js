@@ -49,15 +49,17 @@ pool.getConnection(function(err, connection) {
         console.log("Error connecting database ... nn");
     }
 
+    global.fifoTarefaEnviada = new Array();
+    global.fifoTarefaRecebida = new Array();
 
-	global.fifoTarefaEnviada = new Array();
-	global.fifoTarefaRecebida = new Array();
+    global.fifoTarefa2Enviada = new Array();
+    global.fifoTarefa2Recebida = new Array();
 
-	// Task 1 - Extrair legendas do vídeo
-	var creatorTask1 = require("./services/CreatorTask1");
-	router.get('/task1', function (req, res) {
-		console.log("GET /task1");
-		console.log('Body: ' + JSON.stringify(req.body));
+    // Task 1 - Extrair legendas do vídeo
+    var creatorTask1 = require("./services/CreatorTask1");
+    router.get('/task1', function (req, res) {
+        console.log("GET /task1");
+        console.log('Body: ' + JSON.stringify(req.body));
 
 		creatorTask1.getItemId(connection, res);
 	});
@@ -84,6 +86,7 @@ pool.getConnection(function(err, connection) {
 
 		res.status(200).send("");
 	});
+
 
 	var submissionTask2Service = require("./services/SubmissionTask2");
 	router.post('/task2', function (req, res) {
