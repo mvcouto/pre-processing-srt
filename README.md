@@ -21,4 +21,4 @@ neste caso, o nome da base é: Crowdsourcing
 
 Para consultar as bases de dados, é só executar: select database(); (no prompt do mysql)
 
-Qualquer dúvida: luisaugustomelo@hotmail.com
+Qualquer dúvida: luisaugustomelo@gmail.com
