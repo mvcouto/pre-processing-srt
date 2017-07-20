@@ -49,14 +49,15 @@ pool.getConnection(function(err, connection) {
         console.log("Error connecting database ... nn");
     }
 
-    global.fifoTarefaEnviada = new Array();
-    global.fifoTarefaRecebida = new Array();
 
-    global.fifoTarefa2Enviada = new Array();
-    global.fifoTarefa2Recebida = new Array();
+    global.fifoTarefas = [];
+
+    global.fifoTarefa2Enviada = [];
+    global.fifoTarefa2Recebida = [];
 
     // Task 1 - Extrair legendas do vídeo
     var creatorTask1 = require("./services/CreatorTask1");
+    creatorTask1.prepareVideoQueue(connection);
     router.get('/task1', function (req, res) {
         console.log("GET /task1");
         console.log('Body: ' + JSON.stringify(req.body));

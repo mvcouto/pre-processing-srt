@@ -1,16 +1,14 @@
 GET /task1
 {
-    "id_video": "34"
+    "id_video": "36",
+    "legenda": "those were the Jewish families among the dairy farmers."
 }
 
 POST /task1
 {
     "id_video": "34",
     "legenda": "Legenda de teste",
-    "tinicial": "",
-    "tfinal": "",
+    "tinicial": "2017-07-16 19:00:00",
+    "tfinal": "2017-07-16 19:00:45",
     "fingerprint"= "asfHauOgn4324adnUv624iod#jo"
 }
-
-
-SELECT a.id FROM task1 AS a LEFT JOIN task1submissions AS b ON a.id = b.id_video WHERE a.id NOT IN (SELECT id_video FROM task1submissions WHERE fingerprint = 'asfHauOgn4324adnUv624iod#jo') GROUP BY a.id HAVING COUNT(a.id) < 5 ORDER BY COUNT(a.id) ASC LIMIT 1;

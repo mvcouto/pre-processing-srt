@@ -15,9 +15,9 @@ SubmissionTask1.prototype.insertSubmission = function(res, db_conn, id_video, an
             return
         }
 
-        var index = global.fifoTarefaEnviada.indexOf(id_video);
+        var index = global.fifoTarefas.indexOf(id_video);
         if(index > -1) {
-            global.fifoTarefaEnviada = global.fifoTarefaEnviada.splice(index, 1);
+            global.fifoTarefas = global.fifoTarefas.splice(index, 1);
         }
 
         console.log("1 record inserted, ID: " + result.insertId);
