@@ -78,14 +78,14 @@ pool.getConnection(function(err, connection) {
 			req.body.fingerprint);
 	});
 
+    // Task 2 - Extrair melhor legendas, dentre as legendas sugeridas pelos usuários
+    var creatorTask2 = require("./services/CreatorTask2");
+    router.get('/task2', function (req, res) {
+        console.log("GET /task2");
+        console.log('Body: ' + JSON.stringify(req.body));
 
-	// Task 2 - Extrair melhor legendas, dentre as legendas sugeridas pelos usuários
-	router.get('/task2', function (req, res) {
-		console.log("GET /task2");
-		console.log('Body: ' + JSON.stringify(req.body));
-
-		res.status(200).send("");
-	});
+        creatorTask2.getItemId(connection, res);
+    });
 
 
 	var submissionTask2Service = require("./services/SubmissionTask2");
