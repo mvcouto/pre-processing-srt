@@ -39,7 +39,10 @@ CreatorTask1.prototype.getItemId = function(db_conn, res) {
             legenda: legenda
         };
         res.status(200).send(JSON.stringify(resObj));
-    })
+    }).catch(function (error) {
+        res.status(500).send(JSON.stringify(error));
+        console.error(error);
+    }).done();
 };
 
 CreatorTask1.prototype.prepareVideoQueue = function(db_conn) {
@@ -48,7 +51,9 @@ CreatorTask1.prototype.prepareVideoQueue = function(db_conn) {
             global.fifoTarefas.push(results[0][0][i].id);
         }
         console.log(global.fifoTarefas);
-    });
+    }).catch(function (error) {
+        console.error(error);
+    }).done();
 };
 
 
