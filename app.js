@@ -37,9 +37,16 @@ var spawn = require('child_process').spawn;
 spawn('node', ['pre-processing-srt.js', 'inglourious-basterds-english']);
 
 var pool = mysql.createPool(process.env.CLEARDB_DATABASE_URL || {
+    /* local
     host: 'localhost',
     user: 'root',
     database: 'crowdsub'
+    */
+    host: 'localhost',
+    user: 'crowdsourcing',
+    database: 'crowdsub',
+    password: 'Qwer1@#$'
+
 });
 
 pool.getConnection(function(err, connection) {
@@ -104,8 +111,9 @@ pool.getConnection(function(err, connection) {
        res.status(200).send(JSON.stringify({task: 1}));
     });
 
-
 	app.use('/api', router);
+
+    app.use(express.static('public'));
 
 	app.listen(port);
 	console.log('Servidor rodando na porta: ' + port);
