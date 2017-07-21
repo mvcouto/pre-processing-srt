@@ -11,49 +11,39 @@ var qtd_total_videos = 0;
 
 CreatorTask2.prototype.getItemId = function(db_conn, res) {
     var i=0;
-    getTotalOfVideos(db_conn, res);
-    do{
-        //Busca as legendas de um vídeo qualquer
-        getLegendasVideo(db_conn, res, function(legendas){
-            //Armazena a id do vídeo pegando o indice 0, pois todos os indices deverão ter o mesmo id_video
-            var id_video_escolhido = legendas[0].id_video;
-            //Busca as submissions ja feitas passando o id do video
-            getSubmissionsVideo(db_conn, res, id_video_escolhido);
+    getTotalOfVideos(db_conn, res, function(qtd_total_videos){
+        do{
+            //Busca as legendas de um vídeo qualquer
+            getLegendasVideo(db_conn, res, function(legendas){
+                //Armazena a id do vídeo pegando o indice 0, pois todos os indices deverão ter o mesmo id_video
+                var id_video_escolhido = legendas[0].id_video;
+                //Busca as submissions ja feitas passando o id do video
+                getSubmissionsVideo(db_conn, res, id_video_escolhido, function(submissions){
+                    //Verifica se o video já atingiu 5 submissions, em casa negativo, prosseguir
+                    if(submissions.length < 5){
+                        getOriginalSubtitleVideo(db_conn, res, id_video_escolhido, function(original_subtitle){
+                            //Monta o objeto de envio
+                            var task_subtitles = {
+                                id_video: id_video_escolhido,
+                                //Contem todas as legendas do vídeo
+                                legenda: legendas,
+                                //Busca a legenda original do video em questão
+                                legenda_original: original_subtitle
+                            };
+                            res.contentType('application/json').status(200).send(JSON.stringify(task_subtitles));
 
-            //Verifica se o video já atingiu 5 submissions, em casa negativo, prosseguir
-            if(submissions.length < 5){
-                db_conn.query(sql, function (err, result) {
-                    if (err) {
-                        res.status(404).send('Item not found 2');
-                        console.log(err.toString());
-                        return
-                    }
-
-                    if(result.length < 1) {
-                        res.status(404).send('Item not found')
-                    } else {
-                        getOriginalSubtitleVideo(db_conn, res, id_video_escolhido);
-                        //Monta o objeto de envio
-                        var task_subtitles = {
-                            id_video: id_video_escolhido,
-                            //Contem todas as legendas do vídeo
-                            legenda: legendas,
-                            //Busca a legenda original do video em questão
-                            legenda_original: original_subtitle
-                        };
-                        res.contentType('application/json').status(200).send(JSON.stringify(task_subtitles));
-
-                        global.fifoTarefa2Enviada.push(result[0].id_video.toString());
+                            global.fifoTarefa2Enviada.push(result[0].id_video.toString());
+                        });
                     }
                 });
-            }
-            //Enquanto houver algum video sem o total de avaliacoes, identifique-o e entregue ao usuário
-            i++;py
-        });
-    }while(i < qtd_total_videos);
+                //Enquanto houver algum video sem o total de avaliacoes, identifique-o e entregue ao usuário
+                i++;py
+            });
+        }while(i < qtd_total_videos);
+    });
 };
 
-function getSubmissionsVideo(db_conn, res, id_video_get){
+function getSubmissionsVideo(db_conn, res, id_video_get, callback){
     var sql = 'SELECT * FROM task2submissions AS b WHERE b.id_video = '+id_video_get ;
 
     db_conn.query(sql, function (err, result) {
@@ -62,7 +52,7 @@ function getSubmissionsVideo(db_conn, res, id_video_get){
             console.log(err.toString());
             return
         } else {
-            submissions = result;
+            callback(result);
         }
     });
 }
@@ -90,14 +80,13 @@ function getLegendasVideo(db_conn, res, callback){
             res.status(404).send('Item not found')
         } else {
             callback (result);
-            //legendas = result;
         }
     });
 }
 
 //////////////////////////
 
-function getOriginalSubtitleVideo(db_conn, res, id_video_get){
+function getOriginalSubtitleVideo(db_conn, res, id_video_get, callback){
     var sql = 'SELECT * FROM task1 WHERE id_video = '+id_video_get ;
 
     db_conn.query(sql, function (err, result) {
@@ -106,12 +95,12 @@ function getOriginalSubtitleVideo(db_conn, res, id_video_get){
             console.log(err.toString());
             return
         } else {
-            original_subtitle = result.legend;
+            callback(result.legend);
         }
     });
 }
 
-function getTotalOfVideos(db_conn, res){
+function getTotalOfVideos(db_conn, res, callback){
     var sql = 'SELECT COUNT(*) as qtd_total FROM task1';
 
     db_conn.query(sql, function (err, result) {
@@ -120,7 +109,7 @@ function getTotalOfVideos(db_conn, res){
             console.log(err.toString());
             return
         } else {
-            qtd_total_videos = result.qtd_total;
+            callback(result.qtd_total);
         }
     });
 }
