@@ -3,7 +3,7 @@ var Q = require('q');
 function CreatorTask1(){}
 
 
-CreatorTask1.prototype.getItemId = function(db_conn, res) {
+CreatorTask1.prototype.getItem = function(db_conn, res) {
     console.log(global.fifoTarefas);
 
     var id_video = global.fifoTarefas[0];
@@ -26,7 +26,7 @@ CreatorTask1.prototype.getItemId = function(db_conn, res) {
         removeHead(global.fifoTarefas);
         if(legenda == "") {
             var creatorTask1 = new CreatorTask1();
-            creatorTask1.getItemId(db_conn, res);
+            creatorTask1.getItem(db_conn, res);
             return;
         }
 

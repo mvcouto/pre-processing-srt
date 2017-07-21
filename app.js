@@ -37,16 +37,16 @@ var spawn = require('child_process').spawn;
 spawn('node', ['pre-processing-srt.js', 'inglourious-basterds-english']);
 
 var pool = mysql.createPool(process.env.CLEARDB_DATABASE_URL || {
-    /* local
+
     host: 'localhost',
     user: 'root',
     database: 'crowdsub'
-    */
+    /*
     host: 'localhost',
     user: 'crowdsourcing',
     database: 'crowdsub',
     password: 'Qwer1@#$'
-
+    */
 });
 
 pool.getConnection(function(err, connection) {
@@ -69,7 +69,7 @@ pool.getConnection(function(err, connection) {
         console.log("GET /task1");
         console.log('Body: ' + JSON.stringify(req.body));
 
-		creatorTask1.getItemId(connection, res);
+		creatorTask1.getItem(connection, res);
 	});
 
 	var submissionTask1Service = require("./services/SubmissionTask1");
@@ -87,12 +87,12 @@ pool.getConnection(function(err, connection) {
 	});
 
     // Task 2 - Extrair melhor legendas, dentre as legendas sugeridas pelos usuários
-    var creatorTask2 = require("./services/CreatorTask2");
+    var creatorTask2 = require("./services/CreatorTask2")(connection);
     router.get('/task2', function (req, res) {
         console.log("GET /task2");
         console.log('Body: ' + JSON.stringify(req.body));
 
-        creatorTask2.getItemId(connection, res);
+        creatorTask2.getItem(res);
     });
 
 

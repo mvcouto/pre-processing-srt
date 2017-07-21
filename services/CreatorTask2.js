@@ -1,117 +1,92 @@
-function CreatorTask2(){}
+var Q  = require('q');
 
-//Contem as legendas do video
-var legendas = [];
-//Contem as submissions do video
-var submissions = [];
-//Contem a legenda original
-var original_subtitle = "none";
-//Armazena a quantidade total de vídeos
-var qtd_total_videos = 0;
+var unfinishedTasksQueue = [];
+var db_conn = null;
 
-CreatorTask2.prototype.getItemId = function(db_conn, res) {
-    var i=0;
-    getTotalOfVideos(db_conn, res, function(qtd_total_videos){
-        do{
-            //Busca as legendas de um vídeo qualquer
-            getLegendasVideo(db_conn, res, function(legendas){
-                //Armazena a id do vídeo pegando o indice 0, pois todos os indices deverão ter o mesmo id_video
-                var id_video_escolhido = legendas[0].id_video;
-                //Busca as submissions ja feitas passando o id do video
-                getSubmissionsVideo(db_conn, res, id_video_escolhido, function(submissions){
-                    //Verifica se o video já atingiu 5 submissions, em casa negativo, prosseguir
-                    if(submissions.length < 5){
-                        getOriginalSubtitleVideo(db_conn, res, id_video_escolhido, function(original_subtitle){
-                            //Monta o objeto de envio
-                            var task_subtitles = {
-                                id_video: id_video_escolhido,
-                                //Contem todas as legendas do vídeo
-                                legenda: legendas,
-                                //Busca a legenda original do video em questão
-                                legenda_original: original_subtitle
-                            };
-                            res.contentType('application/json').status(200).send(JSON.stringify(task_subtitles));
+function CreatorTask2(connection) {
+    db_conn = connection;
 
-                            global.fifoTarefa2Enviada.push(result[0].id_video.toString());
-                        });
-                    }
-                });
-                //Enquanto houver algum video sem o total de avaliacoes, identifique-o e entregue ao usuário
-                i++;py
-            });
-        }while(i < qtd_total_videos);
-    });
+    getVideosNaoCompletados()
+        .then(function (result) {
+            for(var i=0; i< result[0].length; i++) {
+                unfinishedTasksQueue.push(result[0][i].id);
+            }
+        })
+        .catch(function (error) {
+            throw error;
+        })
+        .done();
+}
+
+CreatorTask2.prototype.getItem = function (res) {
+    var id_video = unfinishedTasksQueue[0];
+    removeHead(unfinishedTasksQueue);
+
+    getVideosNaoCompletados()
+        .then(function (result) {
+            var itensNaoCompletos = result[0];
+            if(itensNaoCompletos.length == 0) {
+                res.status(404).send('Não há mais itens a serem respondidos');
+                return;
+            }
+
+            var itemIncompleto = false;
+            for(var i=0; i< result[0].length; i++) {
+                if(id_video == result[0][i].id) {
+                    itemIncompleto = true;
+                    break;
+                }
+            }
+
+            if(!itemIncompleto) {
+                getItem(res);
+                return;
+            }
+
+            unfinishedTasksQueue.push(id_video);
+
+            return getDadosItem(id_video);
+        })
+        .then(function (result) {
+            var responseObj = {
+                id_video: result[0][0].id_video,
+                legendas: getListaLegendas(result[0]),
+                legenda_original: result[0][0].legend
+            };
+            res.status(200).send(responseObj);
+        })
+        .catch(function (error) {
+            res.status(500).send('Internal server error');
+            console.error(error);
+        })
+        .done();
 };
 
-function getSubmissionsVideo(db_conn, res, id_video_get, callback){
-    var sql = 'SELECT * FROM task2submissions AS b WHERE b.id_video = '+id_video_get ;
-
-    db_conn.query(sql, function (err, result) {
-        if (err) {
-            res.status(404).send('Item not found 2');
-            console.log(err.toString());
-            return
-        } else {
-            callback(result);
-        }
-    });
-}
-
-function getLegendasVideo(db_conn, res, callback){
-    var sql_where = "";
-    for(var i=0; i < global.fifoTarefa2Enviada.length; i++){
-        if(i == 0){
-            sql_where += "WHERE a.id != " + global.fifoTarefa2Enviada[i];
-        }else{
-            sql_where += " AND a.id != " + global.fifoTarefa2Enviada[i];
-        }
+function getListaLegendas(dados) {
+    var lista = [];
+    for (var i = 0; i < dados.length; i++) {
+        lista.push({
+            'id': dados[i].id,
+            'legenda': dados[i].legenda
+        });
     }
-
-    var sql = 'SELECT a.id, a.id_video, a.legenda FROM task2 AS a LEFT JOIN task2submissions AS b ON a.id_video = b.id_video '+ sql_where +' GROUP BY a.id ASC LIMIT 5';
-
-    db_conn.query(sql, function (err, result) {
-        if (err) {
-            res.status(404).send('Item not found 2');
-            console.log(err.toString());
-            return
-        }
-
-        if(result.length < 1) {
-            res.status(404).send('Item not found')
-        } else {
-            callback (result);
-        }
-    });
+    return lista;
 }
 
-//////////////////////////
-
-function getOriginalSubtitleVideo(db_conn, res, id_video_get, callback){
-    var sql = 'SELECT * FROM task1 WHERE id_video = '+id_video_get ;
-
-    db_conn.query(sql, function (err, result) {
-        if (err) {
-            res.status(404).send('Item not found 2');
-            console.log(err.toString());
-            return
-        } else {
-            callback(result.legend);
-        }
-    });
+function getDadosItem(id_video) {
+    var sql = 'SELECT b.id_video, a.legend, b.id, b.legenda FROM task1 AS a INNER JOIN task2 AS b ON a.id = b.id_video WHERE a.id = ?;';
+    return Q.ninvoke(db_conn, "query", sql, id_video);
 }
 
-function getTotalOfVideos(db_conn, res, callback){
-    var sql = 'SELECT COUNT(*) as qtd_total FROM task1';
-
-    db_conn.query(sql, function (err, result) {
-        if (err) {
-            res.status(404).send('Item not found 2');
-            console.log(err.toString());
-            return
-        } else {
-            callback(result.qtd_total);
-        }
-    });
+function getVideosNaoCompletados() {
+    var sql = 'SELECT a.id FROM task1 AS a LEFT JOIN task2submissions AS b ON a.id = b.id_video GROUP BY a.id HAVING COUNT(*) < 5;';
+    return Q.ninvoke(db_conn, "query", sql);
 }
 
-module.exports = new CreatorTask2();
+var removeHead = function (fila) {
+    fila.splice(0, 1);
+};
+
+module.exports = function (db) {
+    return new CreatorTask2(db);
+};
