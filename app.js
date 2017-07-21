@@ -100,6 +100,10 @@ pool.getConnection(function(err, connection) {
 			req.body.fingerprint);
 	});
 
+	router.get('/taskEnabled', function (req, res) {
+       res.status(200).send(JSON.stringify({task: 1}));
+    });
+
 
 	app.use('/api', router);
 
