@@ -14,9 +14,7 @@ CreatorTask2.prototype.getItemId = function(db_conn, res) {
     getTotalOfVideos(db_conn, res);
     do{
         //Busca as legendas de um vídeo qualquer
-        getLegendasVideo(db_conn, res, function(){
-
-
+        getLegendasVideo(db_conn, res, function(legendas){
             //Armazena a id do vídeo pegando o indice 0, pois todos os indices deverão ter o mesmo id_video
             var id_video_escolhido = legendas[0].id_video;
             //Busca as submissions ja feitas passando o id do video
@@ -69,7 +67,7 @@ function getSubmissionsVideo(db_conn, res, id_video_get){
     });
 }
 
-function getLegendasVideo(db_conn, res){
+function getLegendasVideo(db_conn, res, callback){
     var sql_where = "";
     for(var i=0; i < global.fifoTarefa2Enviada.length; i++){
         if(i == 0){
@@ -91,7 +89,8 @@ function getLegendasVideo(db_conn, res){
         if(result.length < 1) {
             res.status(404).send('Item not found')
         } else {
-            legendas = result;
+            callback (result);
+            //legendas = result;
         }
     });
 }
