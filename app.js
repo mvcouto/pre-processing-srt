@@ -3,6 +3,7 @@ var app = express();                 // define our app using express
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
 
+app.use(express.static('videos'));
 
 // Add headers
 app.use(function (req, res, next) {
