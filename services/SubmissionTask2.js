@@ -11,8 +11,7 @@ SubmissionTask2.prototype.insertSubmission = function(res, db_conn, id_video, id
     db_conn.query(sql, function (err, result) {
         if (err) {
             res.status(500).send('Submissão rejeitada');
-            console.log(err.toString());
-            return
+            throw err;
         }
 
         console.log("1 record inserted, ID: " + result.insertId);

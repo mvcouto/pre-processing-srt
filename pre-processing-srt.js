@@ -46,11 +46,11 @@ catch(err){
 
 
 //Cria a base de dados.
-var file = DBSrt.createDB("Crowdsourcing");
+var file = ""; // DBSrt.createDB("Crowdsourcing");
 //Usa a base de dados.
-file += DBSrt.useDB("Crowdsourcing");
+file += DBSrt.useDB("crowdsourcing");
 //Cria a tabela na base de dados com o nome passado como parametro de entrada camelizado.
-file += DBSrt.createTableSrtDB(camelize(process.argv.slice(2)[0]).replace(new RegExp("-", 'g'), ""));
+file += DBSrt.createTableSrtDB('task1');
 
 //Realiza iteração em cada legenda do vídeo.
 for (i = 0; i < arr.length-1; i++){
@@ -90,11 +90,11 @@ for (i = 0; i < arr.length-1; i++){
             else
                 legend += arr2[j];
         }
-        file += DBSrt.insertSrtDB(camelize(process.argv.slice(2)[0]).replace(new RegExp("-", 'g'), ""), arr2[0], arr3[0], arr3[1], legend);
+        file += DBSrt.insertSrtDB('task1', arr2[0], arr3[0], arr3[1], legend);
     }
     //Caso o tempo de reprodução tenha apenas uma linha de legenda.
     else{
-        file += DBSrt.insertSrtDB(camelize(process.argv.slice(2)[0]).replace(new RegExp("-", 'g'), ""), arr2[0], arr3[0], arr3[1], arr2[2]);
+        file += DBSrt.insertSrtDB('task1', arr2[0], arr3[0], arr3[1], arr2[2]);
     }
 }
 

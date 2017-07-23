@@ -59,9 +59,6 @@ pool.getConnection(function(err, connection) {
 
     global.fifoTarefas = [];
 
-    global.fifoTarefa2Enviada = [];
-    global.fifoTarefa2Recebida = [];
-
     // Task 1 - Extrair legendas do vídeo
     var creatorTask1 = require("./services/CreatorTask1");
     creatorTask1.prepareVideoQueue(connection);

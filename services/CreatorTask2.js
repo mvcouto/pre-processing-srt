@@ -57,7 +57,7 @@ CreatorTask2.prototype.getItem = function (res) {
         })
         .catch(function (error) {
             res.status(500).send('Internal server error');
-            console.error(error);
+            throw error;
         })
         .done();
 };
