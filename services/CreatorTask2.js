@@ -27,7 +27,7 @@ CreatorTask2.prototype.getItem = function (res) {
             var itensNaoCompletos = result[0];
             if(itensNaoCompletos.length == 0) {
                 res.status(404).send('Não há mais itens a serem respondidos');
-                return;
+                return null;
             }
 
             var itemIncompleto = false;
@@ -39,8 +39,8 @@ CreatorTask2.prototype.getItem = function (res) {
             }
 
             if(!itemIncompleto) {
-                getItem(res);
-                return;
+                CreatorTask2.prototype.getItem(res);
+                return null;
             }
 
             unfinishedTasksQueue.push(id_video);
@@ -48,6 +48,10 @@ CreatorTask2.prototype.getItem = function (res) {
             return getDadosItem(id_video);
         })
         .then(function (result) {
+            if(result == null) {
+                return;
+            }
+
             var responseObj = {
                 id_video: result[0][0].id_video,
                 legendas: getListaLegendas(result[0]),

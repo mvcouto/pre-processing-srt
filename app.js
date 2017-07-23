@@ -33,20 +33,20 @@ app.use(bodyParser.json());
 var port = process.env.PORT || 8080;
 var router = express.Router();
 
-var spawn = require('child_process').spawn;
-spawn('node', ['pre-processing-srt.js', 'inglourious-basterds-english']);
+// var spawn = require('child_process').spawn;
+// spawn('node', ['pre-processing-srt.js', 'inglourious-basterds-english']);
 
 var pool = mysql.createPool(process.env.CLEARDB_DATABASE_URL || {
 
-    host: 'localhost',
+/*    host: 'localhost',
     user: 'root',
-    database: 'crowdsub'
-    /*
+    database: 'crowdsub'*/
+
     host: 'localhost',
     user: 'crowdsourcing',
     database: 'crowdsub',
     password: 'Qwer1@#$'
-    */
+
 });
 
 pool.getConnection(function(err, connection) {
@@ -98,10 +98,15 @@ pool.getConnection(function(err, connection) {
 		console.log("POST /task2");
 		console.log('Body: ' + JSON.stringify(req.body));
 
-		submissionTask2Service.insertSubmission(res,
+		submissionTask2Service.insertSubmission(
+		    res,
 			connection,
-			req.body.id_legenda_escolhida,
-			req.body.fingerprint);
+            req.body.id_video,
+            req.body.id_legenda,
+            req.body.tinicial,
+            req.body.tfinal,
+            req.body.fingerprint
+        );
 	});
 
 	router.get('/taskEnabled', function (req, res) {
