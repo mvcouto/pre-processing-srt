@@ -11,13 +11,7 @@ SubmissionTask1.prototype.insertSubmission = function(res, db_conn, id_video, an
     db_conn.query(sql, function (err, result) {
         if (err) {
             res.status(500).send('Submission rejected');
-            console.log(err.toString());
-            return
-        }
-
-        var index = global.fifoTarefas.indexOf(id_video);
-        if(index > -1) {
-            global.fifoTarefas = global.fifoTarefas.splice(index, 1);
+            throw err;
         }
 
         console.log("1 record inserted, ID: " + result.insertId);

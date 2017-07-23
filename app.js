@@ -34,13 +34,20 @@ app.use(bodyParser.json());
 var port = process.env.PORT || 8080;
 var router = express.Router();
 
-var spawn = require('child_process').spawn;
-spawn('node', ['pre-processing-srt.js', 'inglourious-basterds-english']);
+// var spawn = require('child_process').spawn;
+// spawn('node', ['pre-processing-srt.js', 'inglourious-basterds-english']);
 
 var pool = mysql.createPool(process.env.CLEARDB_DATABASE_URL || {
-    host: 'localhost',
+
+/*    host: 'localhost',
     user: 'root',
-    database: 'crowdsub'
+    database: 'crowdsub'*/
+
+    host: 'localhost',
+    user: 'crowdsourcing',
+    database: 'crowdsub',
+    password: 'Qwer1@#$'
+
 });
 
 pool.getConnection(function(err, connection) {
@@ -53,9 +60,6 @@ pool.getConnection(function(err, connection) {
 
     global.fifoTarefas = [];
 
-    global.fifoTarefa2Enviada = [];
-    global.fifoTarefa2Recebida = [];
-
     // Task 1 - Extrair legendas do vídeo
     var creatorTask1 = require("./services/CreatorTask1");
     creatorTask1.prepareVideoQueue(connection);
@@ -63,7 +67,7 @@ pool.getConnection(function(err, connection) {
         console.log("GET /task1");
         console.log('Body: ' + JSON.stringify(req.body));
 
-		creatorTask1.getItemId(connection, res);
+		creatorTask1.getItem(connection, res);
 	});
 
 	var submissionTask1Service = require("./services/SubmissionTask1");
@@ -81,12 +85,12 @@ pool.getConnection(function(err, connection) {
 	});
 
     // Task 2 - Extrair melhor legendas, dentre as legendas sugeridas pelos usuários
-    var creatorTask2 = require("./services/CreatorTask2");
+    var creatorTask2 = require("./services/CreatorTask2")(connection);
     router.get('/task2', function (req, res) {
         console.log("GET /task2");
         console.log('Body: ' + JSON.stringify(req.body));
 
-        creatorTask2.getItemId(connection, res);
+        creatorTask2.getItem(res);
     });
 
 
@@ -95,14 +99,24 @@ pool.getConnection(function(err, connection) {
 		console.log("POST /task2");
 		console.log('Body: ' + JSON.stringify(req.body));
 
-		submissionTask2Service.insertSubmission(res,
+		submissionTask2Service.insertSubmission(
+		    res,
 			connection,
-			req.body.id_legenda_escolhida,
-			req.body.fingerprint);
+            req.body.id_video,
+            req.body.id_legenda,
+            req.body.tinicial,
+            req.body.tfinal,
+            req.body.fingerprint
+        );
 	});
 
+	router.get('/taskEnabled', function (req, res) {
+       res.status(200).send(JSON.stringify({task: 1}));
+    });
 
 	app.use('/api', router);
+
+    app.use(express.static('public'));
 
 	app.listen(port);
 	console.log('Servidor rodando na porta: ' + port);
