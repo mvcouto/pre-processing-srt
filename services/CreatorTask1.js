@@ -73,7 +73,7 @@ CreatorTask1.prototype.prepareVideoQueue = function (db_conn) {
 
 
 function getVideosNaoCompletosComLegenda(db_conn) {
-    var sql = 'SELECT a.id, a.legend FROM task1 AS a LEFT JOIN task1submissions AS b ON a.id = b.id_video GROUP BY a.id HAVING COUNT(*) < 5 ORDER BY COUNT(a.id) ASC;';
+    var sql = 'SELECT a.id, a.legend FROM task1 AS a LEFT JOIN task1submissions AS b ON a.id = b.id_video GROUP BY a.id ORDER BY COUNT(a.id) ASC;';
     return Q.ninvoke(db_conn, "query", sql);
 }
 

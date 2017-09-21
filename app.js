@@ -3,7 +3,6 @@ var app = express();                 // define our app using express
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
 
-app.use(express.static('videos'));
 
 // Add headers
 app.use(function (req, res, next) {
@@ -59,6 +58,7 @@ pool.getConnection(function(err, connection) {
 
 
     global.fifoTarefas = [];
+    global.numeroPedidos = 0;
 
     // Task 1 - Extrair legendas do vídeo
     var creatorTask1 = require("./services/CreatorTask1");
@@ -67,8 +67,19 @@ pool.getConnection(function(err, connection) {
         console.log("GET /task1");
         console.log('Body: ' + JSON.stringify(req.body));
 
-		creatorTask1.getItem(connection, res);
-	});
+	creatorTask1.getItem(connection, res);
+
+	console.log("numero de pedidos: " + global.numeroPedidos)
+	if(global.numeroPedidos > 10) {
+		console.log("Número de pedidos zerado")
+		global.numeroPedidos = 0;
+		global.fifoTarefas = [];
+		creatorTask1.prepareVideoQueue(connection);
+	} else {
+		console.log("Número de pedidos incrementado")
+		global.numeroPedidos = global.numeroPedidos + 1;
+	}
+    });
 
 	var submissionTask1Service = require("./services/SubmissionTask1");
 	router.post('/task1', function (req, res) {
@@ -103,7 +114,7 @@ pool.getConnection(function(err, connection) {
 		    res,
 			connection,
             req.body.id_video,
-            req.body.id_legenda,
+            req.body.id_legenda_escolhida,
             req.body.tinicial,
             req.body.tfinal,
             req.body.fingerprint
@@ -111,12 +122,11 @@ pool.getConnection(function(err, connection) {
 	});
 
 	router.get('/taskEnabled', function (req, res) {
-       res.status(200).send(JSON.stringify({task: 1}));
+       res.status(200).send(JSON.stringify({task: 2}));
     });
 
+	app.use('/videos', express.static('videos'));
 	app.use('/api', router);
-
-    app.use(express.static('public'));
 
 	app.listen(port);
 	console.log('Servidor rodando na porta: ' + port);

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="description" content="Uma página para notação de vídeo.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+<title>Tradução de Vídeo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-blue.min.css" />
+<link rel="stylesheet" href="../pagina.css">
+<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+<script src="../client.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+</head>
+
+<body>
+  <script>
+    var client = new ClientJS();
+    var fingerprint = client.getFingerprint();
+  </script>
+
+  <script>
+    var iddovideo;
+    var legendatotal;
+    var legenda;
+    var link;
+    var dt = new Date();
+    var anoinicial = dt.getFullYear();
+    var mesinicial = dt.getMonth();
+    var diainicial = dt.getDay();
+    var horainicial = dt.getHours();
+    var minutoinicial = dt.getMinutes();
+    var segundoinicial = dt.getSeconds();
+    var totaltempoinicial = anoinicial + '-' + mesinicial + '-' + diainicial + ' ' + horainicial + ':' + minutoinicial + ':' + segundoinicial;
+    $.getJSON("http://46.101.129.171:8080/api/task1", function (key, result) {
+      iddovideo = key.id_video;
+      legendatotal = key.legenda;
+      legenda = "Legenda Original: " + legendatotal;
+      link = "http://46.101.129.171:8080/videos/" + iddovideo + ".mp4";
+
+      $("#video").html('<source src="' + link + '" type="video/mp4"></source>');
+      $('#legendatexto').html(legenda);
+    });
+  </script>
+  <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <header class="mdl-layout__header">
+      <div class="mdl-layout__header-row">
+        <span class="mdl-layout-title">Tradução de Vídeo</span>
+
+      </div>
+    </header>
+  </div>
+  <br/>
+  <br/>
+  <br/>
+
+
+  <center>
+
+    <h5> Assista o vídeo abaixo, veja a legenda original, escreva uma tradução para o trecho e clique em "Enviar" ou aperte Enter.</h5>
+
+    <video id="video" controls autoplay preload="auto" width="55%" height="55%">
+
+    </video>
+
+    <h6 id="legendatexto"></h6>
+
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+      <input class="mdl-textfield__input" type="text" id="legendadigitada" autofocus onkeypress="return searchKeyPress(event);">
+      <label class="mdl-textfield__label" for="legenda">Escreva a legenda traduzida aqui!</label>
+    </div>
+    <br/>
+    <button id="enviarid" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+  Enviar
+</button>
+    <br/>
+    <br/>
+    <button id="mudarid" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+  Mudar Vídeo
+</button>
+  </center>
+  </div>
+
+  <script>
+
+    function searchKeyPress(e)
+{
+if (e.keyCode == 13)
+    {
+        var digitou;
+      digitou = $('#legendadigitada').val();
+      if (digitou == '') {
+        alert("Nada foi digitado!");
+      }
+      else {
+        var dt2 = new Date();
+        var anofinal = dt2.getFullYear();
+        var mesfinal = dt2.getMonth();
+        var diafinal = dt2.getDay();
+        var horafinal = dt2.getHours();
+        var minutofinal = dt2.getMinutes();
+        var segundofinal = dt2.getSeconds();
+        var totaltempofinal = anofinal + '-' + mesfinal + '-' + diafinal + ' ' + horafinal + ':' + minutofinal + ':' + segundofinal;
+        var enviar = JSON.stringify({ "id_video": iddovideo, "legenda": digitou, "tinicial": totaltempoinicial, "tfinal": totaltempofinal, "fingerprint": fingerprint });
+
+   $.ajax({
+          type: 'POST',
+          async: false,
+          url: 'http://46.101.129.171:8080/api/task1',
+          data: enviar,
+          contentType: "application/json",
+          dataType: 'json'
+        });
+        $(window).attr("location", "../index.html");
+      
+      }
+
+    }
+}
+
+
+    $("#mudarid").click(function () {
+      $(window).attr("location", "../index.html");
+    });
+
+    $("#enviarid").click(function () {
+      var digitou;
+      digitou = $('#legendadigitada').val();
+      if (digitou == '') {
+        alert("Nada foi digitado!");
+      }
+      else {
+        var dt2 = new Date();
+        var anofinal = dt2.getFullYear();
+        var mesfinal = dt2.getMonth();
+        var diafinal = dt2.getDay();
+        var horafinal = dt2.getHours();
+        var minutofinal = dt2.getMinutes();
+        var segundofinal = dt2.getSeconds();
+        var totaltempofinal = anofinal + '-' + mesfinal + '-' + diafinal + ' ' + horafinal + ':' + minutofinal + ':' + segundofinal;
+        var enviar = JSON.stringify({ "id_video": iddovideo, "legenda": digitou, "tinicial": totaltempoinicial, "tfinal": totaltempofinal, "fingerprint": fingerprint });
+
+        $.ajax({
+          type: 'POST',
+          async: false,
+          url: 'http://46.101.129.171:8080/api/task1',
+          data: enviar,
+          contentType: "application/json",
+          dataType: 'json'
+        });
+        $(window).attr("location", "../index.html");
+      }
+
+    });
+  </script>
+</body>
+
+</html>
